@@ -1,0 +1,163 @@
+#include <Adafruit_NeoPixel.h>
+
+#define LED_PIN 16
+
+Adafruit_NeoPixel led(1, LED_PIN, NEO_GRB + NEO_KHZ800);
+
+
+// ===============================
+// DECLARAÇÕES
+// ===============================
+
+
+// inicia ao ser conectado em uma porta usb
+
+
+void inicio();
+void led_on(); 
+void led_error();
+void led_piscando();
+bool detectar_sd();
+void inicializar_spi();
+void inicializar_sd();
+void disponibilizar_usb();
+void transferencia_e_edicao_de_dados();
+bool ejetado_sd();
+bool remocao_inesperada_sd();
+void cancelar_detecao_sd();
+void final(); 
+
+
+// ===============================
+// PROGRAMA PRINCIPAL
+// ===============================
+
+
+int main() {
+
+ inicio();
+
+ bool encerrar = false;
+
+ while (true) {
+
+  if (detectar_sd()) {
+
+   led_piscando();
+   inicializar_spi();
+   inicializar_sd();
+   disponibilizar_usb(); 
+
+  while (true) {
+
+   transferencia_e_edicao_de_dados();
+  
+    if (ejetado_sd()) {
+     led_on();
+     encerrar = true;
+     break;
+      }
+   
+    if (remocao_inesperada_sd()) {
+     led_error();
+     encerrar = true;
+     break;
+     }
+
+   }
+
+ }
+
+else {
+led_on();
+}
+
+if (encerrar) {
+break;
+}
+
+}
+
+cancelar_detecao_sd();
+final();
+}
+
+
+// ===============================
+// FUNÇÕES
+// ===============================
+
+
+void inicio() {
+    led_on();
+}
+
+void led_on() { // código do LED aqui
+    led.setPixelColor(0, led.Color(0, 255, 0));
+    led.show();
+}
+
+void led_error() {
+    led.setPixelColor(0, led.Color(255, 0, 0));
+    led.show();
+}
+
+void led_piscando() {
+    led.setPixelColor(0, led.Color(0, 255, 0));
+    led.show();
+
+    delay(500);
+
+    led.setPixelColor(0, led.Color(0, 0, 0));
+    led.show();
+
+    delay(500);
+}
+
+bool detectar_sd() {
+if (/* SD foi detectado */) {
+        return true;
+    }
+
+    else {
+        return false;
+    }
+}
+
+void inicializar_spi() {
+}
+
+void inicializar_sd() {
+}
+
+void disponibilizar_usb() {
+}
+ 
+void transferencia_e_edicao_de_dados() {
+}
+
+bool ejetado_sd() {
+    if (/* Windows ejetou o dispositivo */) {
+        return true;
+    }
+
+    return false;
+}
+
+bool remocao_inesperada_sd() {
+    if (/* SD foi removido sem ejetar */) {
+        return true;
+    }
+
+    return false;
+}
+
+void cancelar_detecao_sd() {
+    // parar detecção do SD
+    // desligar/desativar alguma rotina de detecção
+    // limpar algum estado, se necessário
+}
+
+void final() {
+    led_on();
+}
